@@ -44,6 +44,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-webcam": "^7.0.1",
+    "socket-io": "^1.0.0",
+    "socket.io-client": "^4.6.1",
     "stats.js": "^0.17.0",
     "style-loader": "^0.21.0",
     "three": "^0.98.0",
