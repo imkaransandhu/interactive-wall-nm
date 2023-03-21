@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import styles from "./ScreenshotButton.module.css";
-import io from "Socket.IO-client";
+import io from "socket.io-client";
 
 const ScreenshotButtonSend = () => {
   const [socket, setSocket] = useState(null);

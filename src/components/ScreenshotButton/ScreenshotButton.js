@@ -5,7 +5,7 @@ import styles from "./ScreenshotButton.module.css";
 import html2canvas from "html2canvas";
 import axios from "axios";
 import { dataURLToBlob } from "blob-util";
-import io from "Socket.IO-client";
+import io from "socket.io-client";
 
 const ScreenshotButton = () => {
   const [imgSrc, setImgSrc] = useState();

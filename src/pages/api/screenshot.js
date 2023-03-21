@@ -4,7 +4,7 @@
 //   res.status(200).json({ name: 'John Doe' })
 // }
 
-import { Server } from "Socket.IO";
+import { Server } from "socket.io";
 const SocketHandler = (req, res) => {
   //console.log(req);
   if (res.socket.server.io) {
