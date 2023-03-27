@@ -41,7 +41,7 @@ export default class Particles {
       // discard pixels darker than threshold #22
       numVisible = 0;
       threshold = 34;
-
+      console.log(this.texture);
       const img = this.texture.image;
       const canvas = document.createElement("canvas");
       canvas.classList.add("canvasDomEl");
@@ -64,7 +64,7 @@ export default class Particles {
     }
 
     const uniforms = {
-      uTime: { value: 0 },
+      uTime: { value: 10.0 },
       uRandom: { value: 1.0 },
       uDepth: { value: 2.0 },
       uSize: { value: 0.0 },

@@ -38,6 +38,14 @@ export default function Home() {
           top: 0,
         }}
       />
+
+      <video
+        style={{ display: "none" }}
+        id="myVideo"
+        width="640"
+        height="480"
+        controls
+      ></video>
     </Fragment>
   );
 }

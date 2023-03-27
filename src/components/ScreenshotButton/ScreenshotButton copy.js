@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import styles from "./ScreenshotButton.module.css";
 import html2canvas from "html2canvas";
 import axios from "axios";
+import { dataURLToBlob } from "blob-util";
 import io from "socket.io-client";
 
 const ScreenshotButton = () => {
   const [imgSrc, setImgSrc] = useState();
+  const [blobHolder, setBlobHolder] = useState();
+  const [clicked, setClicked] = useState(false);
   const [socket, setSocket] = useState(null);
-
-  // Function to take the screenshot and then call the endpoint to send it to te server
   function takeScreenshot() {
     let dataUrl;
     const canvasElement = document.querySelector(".container"); //getting the container in which the canvas element is
@@ -28,6 +29,8 @@ const ScreenshotButton = () => {
         });
       }
     });
+    // Emit a 'screen1-click' event to the server
+    //socket.emit("screen1-click");
   }
 
   useEffect(() => {
@@ -39,8 +42,7 @@ const ScreenshotButton = () => {
         console.log("connected");
       });
 
-      newSocket.on("receive-blob", () => {
-        console.log("Received");
+      newSocket.on("screen1-click", () => {
         takeScreenshot();
       });
 
@@ -51,61 +53,51 @@ const ScreenshotButton = () => {
   }, []);
 
   useEffect(() => {
+    console.log(imgSrc);
+    //  Creating the name of file with a time and date stamp
+
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-indexed month, so add 1
+    const currentDay = currentDate.getDate();
+    const currentHour = currentDate.getHours();
+    const currentMinute = currentDate.getMinutes();
+    const currentSecond = currentDate.getSeconds();
+    const fileName = `image_${currentMonth}_${currentDay}_${currentYear}_${currentHour}:${currentMinute}:${currentSecond}`;
+
     // function to check the if the string is a valid uri
     function isDataURI(str) {
+      console.log(str);
       return /^data:[^;]+(;[^,]+)*(,.*|$)/.test(str);
     }
-
-    // Validating if the imgSrc is a valid DataURI
+    console.log(imgSrc);
+    //
     if (isDataURI(imgSrc)) {
-      //  Creating the name of file with a time and date stamp
-      const currentDate = new Date();
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = (currentDate.getMonth() + 1)
-        .toString()
-        .padStart(2, "0"); // getMonth() returns 0-indexed month, so add 1
-      const currentDay = currentDate.getDate().toString().padStart(2, "0");
-      const currentHour = currentDate.getHours().toString().padStart(2, "0");
-      const currentMinute = currentDate
-        .getMinutes()
-        .toString()
-        .padStart(2, "0");
-      const currentSecond = currentDate
-        .getSeconds()
-        .toString()
-        .padStart(2, "0");
-      const fileName = `image_${currentMonth}.${currentDay}.${currentYear}_${currentHour}:${currentMinute}:${currentSecond}.png`;
-
-      // Data Object sent to the backend
-      let data = {
-        imgData: imgSrc,
-        name: fileName,
-      };
-
+      console.log("true");
+      const blob = dataURLToBlob(imgSrc);
+      console.log(blob);
+      setBlobHolder(blob);
       let config = {
         method: "put",
         maxBodyLength: Infinity,
-        url: "/api/PutBlob",
+        url: `https://interactivewallgallery.blob.core.windows.net/gallery/${fileName}?sv=2021-12-02&ss=bf&srt=o&sp=rwdlaciytfx&se=2024-04-16T08:00:35Z&st=2023-03-12T23:00:35Z&spr=https&sig=tFEnx2jJW%2FNWhWZW4mHBH5uhIVoAlaPsV5pGSMdWvTk%3D`,
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "x-ms-blob-type": "BlockBlob",
+          "Content-Type": "image/png",
         },
-        data: data,
+        data: blob,
       };
 
-      axios
-        .request(config)
-        .then((response) => {
-          console.log(response.data);
-          //socket.emit("screen1-click");
-
-          console.log("Emit a new image");
-          socket.emit("uploaded-blob", fileName);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if (blob) {
+        axios(config)
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imgSrc]);
 
   return (
@@ -113,6 +105,7 @@ const ScreenshotButton = () => {
       <button
         onClick={() => takeScreenshot()}
         className={styles.button}
+        disabled={clicked}
         style={{ cursor: "pointer" }}
       >
         {" "}

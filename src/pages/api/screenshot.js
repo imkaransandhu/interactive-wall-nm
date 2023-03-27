@@ -16,17 +16,20 @@ const SocketHandler = (req, res) => {
 
     io.on("connection", (socket) => {
       // Listen for button clicks from Screen 1
-      socket.on("screen1-click", () => {
-        // Emit a 'screen2-click' event to Screen 2
-        console.log("karan");
-        socket.broadcast.emit("screen2-click");
+
+      socket.on("uploaded-blob", (blobName) => {
+        socket.broadcast.emit("routeToGallery");
+        console.log("routeoGallery");
+        setTimeout(() => {
+          console.log("Load Image On Top");
+          socket.broadcast.emit("loadLastImage", blobName);
+        }, 2000);
       });
 
       // Listen for button clicks from Screen 2
-      socket.on("screen2-click", () => {
+      socket.on("send-blob", () => {
         // Emit a 'screen1-click' event to Screen 1
-        console.log("karan2");
-        socket.broadcast.emit("screen1-click");
+        socket.broadcast.emit("receive-blob");
       });
     });
   }

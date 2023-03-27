@@ -2,12 +2,12 @@ import CryptoJS from "crypto-js";
 export default async function get(request, res) {
   const key = process.env.AZURE_BLOB_KEY;
   process.env.dateHeader = new Date().toUTCString();
-  console.log(process.env.dateHeader);
+  // console.log(process.env.dateHeader);
   const strToSign =
     "GET\n\n\n\nx-ms-date:" +
     process.env.dateHeader +
     "\n/interactivewallgallery/gallery?comp=list";
-  console.log(strToSign);
+  // console.log(strToSign);
   const secret = CryptoJS.enc.Base64.parse(key);
   const hash = CryptoJS.HmacSHA256(strToSign, secret);
   const base64EncodedHash = CryptoJS.enc.Base64.stringify(hash);
@@ -31,7 +31,7 @@ export default async function get(request, res) {
     const data = await response.text();
     // Save the data to a variable
     const myData = data;
-    console.log(`this is the variable being awaited and saved: ${myData}`);
+    // console.log(`this is the variable being awaited and saved: ${myData}`);
     res.send(myData);
     // return new Response(json);
   } catch (error) {

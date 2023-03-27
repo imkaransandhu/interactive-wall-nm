@@ -36,15 +36,15 @@ export default class InteractiveControls extends EventEmitter {
     this.enable();
 
     /////////////////////////////////////////////////////////////////////
-  
+
     this.detector = null;
     this.interval = null;
     this.video = null;
     this.poses = null;
     this.stream = null;
     this.videoConfig = null;
-  
-    this.createModal(); 
+
+    this.createModal();
 
     /////////////////////////////////////////////////////////////////////////
   }
@@ -54,29 +54,34 @@ export default class InteractiveControls extends EventEmitter {
     const detectorConfig = {
       modelType: poseDetection.movenet.modelType.SINGLEPOSE_THUNDER,
       enableTracking: true,
-      trackerType: poseDetection.TrackerType.BoundingBox
+      trackerType: poseDetection.TrackerType.BoundingBox,
     };
-    const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
+    const detector = await poseDetection.createDetector(
+      poseDetection.SupportedModels.MoveNet,
+      detectorConfig
+    );
     this.video = document.getElementById("webcam"); // accesing the webcam element
     this.video.height = 480;
     this.video.width = 640;
-    
-    if (navigator.mediaDevices || navigator.mediaDevices.getUserMedia) { // Checking if the webcam is active 
-      setInterval(async () => {
+    setInterval(async () => {
+      // Checking if the webcam is active
+      if (
+        navigator.mediaDevices &&
+        navigator.mediaDevices.getUserMedia &&
+        this.video
+      ) {
         const poses = await detector.estimatePoses(this.video);
         if (poses && poses.length > 0) {
-
           poses.forEach((personPose) => {
             personPose.keypoints.forEach((keypoint) => {
-  
-              this.onPose(keypoint);  
+              this.onPose(keypoint);
             });
-          })
-              }
-      },100)
-    } else {
-      console.log("wait for camera to load");
-    }
+          });
+        }
+      } else {
+        console.log("wait for camera to load");
+      }
+    }, 100);
   }
 
   /////////////////////////////////////////////////////////////
@@ -210,17 +215,14 @@ export default class InteractiveControls extends EventEmitter {
   }
 
   onPose(keyPoints) {
-
-    
     // Normalize the keyPoints from webcam height and  width to screen width and height
-    keyPoints.x = screen.width - ((keyPoints.x/640) * screen.width); // Flippinig the x-cordinates, to create the animation in same direction. 
-    const touch = { x: keyPoints.x, y: (keyPoints.y/480) * screen.height };
-
+    keyPoints.x = screen.width - (keyPoints.x / 640) * screen.width; // Flippinig the x-cordinates, to create the animation in same direction.
+    const touch = { x: keyPoints.x, y: (keyPoints.y / 480) * screen.height };
 
     this.mouse.x = ((touch.x + this.rect.x) / this.rect.width) * 2 - 1;
     this.mouse.y = -((touch.y + this.rect.y) / this.rect.height) * 2 + 1;
 
-    this.raycaster.setFromCamera(this.mouse, this.camera);  
+    this.raycaster.setFromCamera(this.mouse, this.camera);
 
     const intersects = this.raycaster.intersectObjects(this.objects);
 

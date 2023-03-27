@@ -1,30 +1,35 @@
 const { BlobServiceClient } = require("@azure/storage-blob");
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "8mb",
+    },
+  },
+};
 
 export default async function updateblob(req, res) {
   // Create a BlobServiceClient object using your connection string
-  const connectionString = `https://interactivewallgallery.blob.core.windows.net/`;
+  const { name, imgData } = req.body;
+  const accountName = process.env.ACCOUNT_NAME;
+  const key = process.env.AZURE_BLOB_KEY;
+
+  const connectionString = `DefaultEndpointsProtocol=https;AccountName=${accountName};AccountKey=${key};EndpointSuffix=core.windows.net`;
   const blobServiceClient =
     BlobServiceClient.fromConnectionString(connectionString);
 
   // Create a container client
-  const containerName = "YOUR_CONTAINER_NAME";
+  const containerName = process.env.CONTAINER_GALLERY;
   const containerClient = blobServiceClient.getContainerClient(containerName);
 
   // Set up the blob options
-  const blobName = "YOUR_BLOB_NAME";
+  const blobName = name;
   const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-  const blobOptions = {
-    blobHTTPHeaders: { blobContentType: "YOUR_CONTENT_TYPE" },
-  };
 
-  // Upload the blob data
-  const data = "YOUR_DATA";
-  const uploadBlobResponse = await blockBlobClient.upload(
-    data,
-    data.length,
-    blobOptions
-  );
-  console.log(`Upload block blob ${blobName} successfully`);
+  // Converting the dataURI to a buffer
+  const buffer = Buffer.from(imgData.split(",")[1], "base64");
 
-  res.send("Done");
+  // Uploading the buffer or blob to the storage
+  const response = await blockBlobClient.upload(buffer, buffer.length);
+
+  res.send(response);
 }

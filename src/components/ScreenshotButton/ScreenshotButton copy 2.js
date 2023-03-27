@@ -1,77 +1,110 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./ScreenshotButton.module.css";
 import html2canvas from "html2canvas";
-import containerClient from "../../app/api/Azure/AzureStorage";
+import axios from "axios";
+import io from "socket.io-client";
+import { dataURLToBlob } from "blob-util";
 
 const ScreenshotButton = () => {
-  const [imgSrc, setImgSrc] = useState("/images/sample-01.jpg");
-  const [newBlob, setNewBlob] = useState();
-  function takeScreenshot(e) {
-    e.preventDefault();
+  const [imgSrc, setImgSrc] = useState();
+  const [socket, setSocket] = useState(null);
 
-    let dataURL;
-    const canvasElement = document.querySelector(".container");
-
-    const allElArray = Array.from(canvasElement.children);
+  // Function to take the screenshot and then call the endpoint to send it to te server
+  function takeScreenshot() {
+    let dataUrl;
+    const canvasElement = document.querySelector(".container"); //getting the container in which the canvas element is
+    const allElArray = Array.from(canvasElement.children); // grabbing all elments in the container and convering it to an array
     const canvas = "CANVAS";
+    // checking if the canvas element is present in the container
     allElArray.forEach((child) => {
       if (child.nodeName === canvas) {
-        canvasElement.children[0].style.backgroundColor = "black";
-        html2canvas(canvasElement.children[0], { useCORS: true }).then(
-          (canvas) => {
-            dataURL = canvas.toDataURL("image/png");
-            setImgSrc(dataURL);
-          }
-        );
+        canvasElement.children[0].style.backgroundColor = "black"; // adding a black bacakground to the canvas
+
+        // grabbing the screenshot as Data URI
+        html2canvas(canvasElement.children[0]).then((canvas) => {
+          dataUrl = canvas.toDataURL("image/png");
+          setImgSrc(dataUrl);
+        });
       }
     });
+  }
 
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-indexed month, so add 1
-    const currentDay = currentDate.getDate();
-    const currentHour = currentDate.getHours();
-    const currentMinute = currentDate.getMinutes();
-    const currentSecond = currentDate.getSeconds();
-    const fileName = `image_${currentMonth}_${currentDay}_${currentYear}_${currentHour}:${currentMinute}:${currentSecond}`;
+  useEffect(() => {
+    const socketInitializer = async () => {
+      await fetch("/api/screenshot");
+      const newSocket = io();
 
-    const handleUpload = async (dataUri, name) => {
-      const blobName = name;
-      const imageBytes = Buffer.from(dataUri.split(",")[1], "base64");
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      await blockBlobClient.upload(imageBytes, imageBytes.length);
-      console.log("Image uploaded to Azure Blob Storage!");
+      newSocket.on("connect", () => {
+        console.log("connected");
+      });
+
+      newSocket.on("screen1-click", () => {
+        takeScreenshot();
+      });
+
+      setSocket(newSocket);
     };
 
-    handleUpload(imgSrc, fileName);
-  }
+    socketInitializer();
+  }, []);
+
+  useEffect(() => {
+    // function to check the if the string is a valid uri
+    function isDataURI(str) {
+      return /^data:[^;]+(;[^,]+)*(,.*|$)/.test(str);
+    }
+
+    // Validating if the imgSrc is a valid DataURI
+    if (isDataURI(imgSrc)) {
+      //  Creating the name of file with a time and date stamp
+
+      const blob = dataURLToBlob(imgSrc);
+      console.log(blob);
+      let config = {
+        method: "put",
+        maxContentLength: 100 * 1024 * 1024, // 100MB
+        maxBodyLength: 100 * 1024 * 1024, // 100MB
+        url: "/api/PutBlob",
+        data: blob,
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      };
+
+      axios
+        .request(config)
+        .then((response) => {
+          console.log(response.data);
+          socket.emit("screen1-click");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [imgSrc]);
+
   return (
     <div className={styles.buttonComponent}>
-      <button onClick={takeScreenshot} className={styles.button}>
+      <button
+        onClick={() => takeScreenshot()}
+        className={styles.button}
+        style={{ cursor: "pointer" }}
+      >
         {" "}
         Grab{" "}
       </button>
 
-      <Image src={imgSrc} alt={"screnshot"} height={100} width={100} />
+      <Image
+        id="blobImage"
+        src={imgSrc ? imgSrc : "/images/sample-01.jpg"}
+        alt={"screnshot"}
+        height={100}
+        width={100}
+      />
     </div>
   );
 };
 
 export default ScreenshotButton;
-// function dataUriToBlob(dataUri) {
-//   const byteString = atob(dataUri.split(",")[1]); // convert base64-encoded data to binary data
-//   const mimeType = dataUri.split(",")[0].split(":")[1].split(";")[0]; // extract MIME type from data URI
-//   const arrayBuffer = new ArrayBuffer(byteString.length); // create a buffer to hold binary data
-//   const uint8Array = new Uint8Array(arrayBuffer); // create a view into the buffer
-//   for (let i = 0; i < byteString.length; i++) {
-//     uint8Array[i] = byteString.charCodeAt(i); // copy binary data into the buffer
-//   }
-//   const blob = new Blob([arrayBuffer], { type: mimeType }); // create a Blob object from the buffer and MIME type
-//   return blob;
-// }
-
-// const blob1 = dataUriToBlob(imgSrc); // convert data URI to Blob object
-
-//setNewBlob(blob);
