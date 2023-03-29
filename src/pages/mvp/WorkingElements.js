@@ -3,8 +3,8 @@ import Webcam from "react-webcam";
 
 const { Fragment } = require("react");
 
-const WorkingElements = ({ refDetail }) => {
-  const { canvas, webcam, videoToReveal, imgRef } = refDetail;
+const WorkingElements = ({ canvas, webcam, videoToReveal, imgRef }) => {
+  // const { canvas, webcam, videoToReveal, imgRef } = refDetail;
   return (
     <Fragment>
       <canvas

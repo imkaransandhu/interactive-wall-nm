@@ -15,7 +15,7 @@ export default function Home() {
   const newCanvas3 = useRef(); // clone 1
   const newCanvas4 = useRef(); // clone 1
   const newCanvas5 = useRef(); // clone 1
-  const WorkingElementsRefs = { canvas, webcam, videoToReveal, imgRef }; // Props for the WorkingElements
+  // const WorkingElementsRefs = { canvas, webcam, videoToReveal, imgRef }; // Props for the WorkingElements
   useEffect(() => {
     // Assigning the current states
     const canvasEl = canvas.current;
@@ -52,9 +52,13 @@ export default function Home() {
       <CanvasElement canvavrefDetail={newCanvas3} />
       <CanvasElement canvavrefDetail={newCanvas4} />
       <CanvasElement canvavrefDetail={newCanvas5} />
-
       {/* Grabbing data elements */}
-      <WorkingElements refDetail={WorkingElementsRefs} />
+      <WorkingElements
+        canvas={canvas}
+        webcam={webcam}
+        videoToReveal={videoToReveal}
+        imgRef={imgRef}
+      />
     </Fragment>
   );
 }

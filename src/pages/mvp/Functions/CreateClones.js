@@ -32,4 +32,5 @@ export default function CreateClones(pixels, canvas, x, canvasToCreate) {
   );
   const newContext = canvasToCreate.getContext("2d");
   newContext.putImageData(newImageData, x, 0);
+  return null;
 }

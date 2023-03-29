@@ -68,13 +68,13 @@ export default async function RemoveBackground(
         canvasEl.height
       );
       const pixels = imageData.data;
-
-      CreateClones(pixels, canvasEl, 10, newCanvasEl1);
-      CreateClones(pixels, canvasEl, 20, newCanvasEl2);
-      CreateClones(pixels, canvasEl, 30, newCanvasEl3);
-      CreateClones(pixels, canvasEl, 40, newCanvasEl4);
-      CreateClones(pixels, canvasEl, 50, newCanvasEl5);
-
+      if (canvasEl.width > 0 && canvasEl.height > 0) {
+        CreateClones(pixels, canvasEl, 10, newCanvasEl1);
+        CreateClones(pixels, canvasEl, 20, newCanvasEl2);
+        CreateClones(pixels, canvasEl, 30, newCanvasEl3);
+        CreateClones(pixels, canvasEl, 40, newCanvasEl4);
+        CreateClones(pixels, canvasEl, 50, newCanvasEl5);
+      }
       videoToRevealEl.play();
     } else {
       console.error("Waiting to camera to load");
@@ -83,4 +83,5 @@ export default async function RemoveBackground(
     requestAnimationFrame(update);
   }
   requestAnimationFrame(update);
+  return null;
 }
