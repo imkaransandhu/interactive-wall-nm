@@ -2,8 +2,8 @@
 import { Fragment, useEffect, useRef } from "react";
 
 import CanvasElement from "./CanvasElement";
+import { RemoveBackground } from "../../utils/Functions/RemoveBackground";
 import WorkingElements from "./WorkingElements";
-import RemoveBackground from "./Functions/RemoveBackground";
 
 export default function Home() {
   const canvas = useRef(); //First canvas on which the the Silhouette is drawn with black background

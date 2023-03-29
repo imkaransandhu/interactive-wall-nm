@@ -3,9 +3,9 @@ import * as bodySegmentation from "@tensorflow-models/body-segmentation";
 // Register WebGL backend.
 import "@tensorflow/tfjs-backend-webgl";
 
-import CreateClones from "./CreateClones";
+import { CreateClones } from "./CreateClones";
 
-export default async function RemoveBackground(
+export async function RemoveBackground(
   canvasEl,
   webcamEl,
   videoToRevealEl,
@@ -83,5 +83,4 @@ export default async function RemoveBackground(
     requestAnimationFrame(update);
   }
   requestAnimationFrame(update);
-  return null;
 }

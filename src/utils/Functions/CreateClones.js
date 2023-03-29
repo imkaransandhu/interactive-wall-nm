@@ -1,4 +1,4 @@
-export default function CreateClones(pixels, canvas, x, canvasToCreate) {
+export function CreateClones(pixels, canvas, x, canvasToCreate) {
   const modifiedPixels = new Uint8ClampedArray(pixels.length);
   const color = Math.floor(Math.random() * 151) + 100;
   for (let i = 0; i < pixels.length; i += 4) {
