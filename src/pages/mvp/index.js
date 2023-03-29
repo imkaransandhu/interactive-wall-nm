@@ -2,7 +2,7 @@
 import { Fragment, useEffect, useRef } from "react";
 
 import CanvasElement from "./CanvasElement";
-import { RemoveBackground } from "../../utils/Functions/RemoveBackground";
+import RemoveBackground from "../../utils/Functions/RemoveBackground";
 import WorkingElements from "./WorkingElements";
 
 export default function Home() {

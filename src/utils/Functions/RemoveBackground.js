@@ -3,9 +3,9 @@ import * as bodySegmentation from "@tensorflow-models/body-segmentation";
 // Register WebGL backend.
 import "@tensorflow/tfjs-backend-webgl";
 
-import { CreateClones } from "./CreateClones";
+import CreateClones from "./CreateClones";
 
-export async function RemoveBackground(
+export default async function RemoveBackground(
   canvasEl,
   webcamEl,
   videoToRevealEl,
@@ -45,7 +45,7 @@ export async function RemoveBackground(
       );
 
       const opacity = 1;
-      const maskBlurAmount = 0;
+      const maskBlurAmount = 10;
       const flipHorizontal = true;
 
       // Draw the mask onto the image on a canvas.  With opacity set to 0.7 and
@@ -68,13 +68,23 @@ export async function RemoveBackground(
         canvasEl.height
       );
       const pixels = imageData.data;
-      if (canvasEl.width > 0 && canvasEl.height > 0) {
-        CreateClones(pixels, canvasEl, 10, newCanvasEl1);
-        CreateClones(pixels, canvasEl, 20, newCanvasEl2);
-        CreateClones(pixels, canvasEl, 30, newCanvasEl3);
-        CreateClones(pixels, canvasEl, 40, newCanvasEl4);
-        CreateClones(pixels, canvasEl, 50, newCanvasEl5);
-      }
+
+      setTimeout(() => {
+        CreateClones(pixels, canvasEl, 225, 0, newCanvasEl1);
+      }, 400);
+
+      setTimeout(() => {
+        CreateClones(pixels, canvasEl, 235, 0, newCanvasEl2);
+      }, 300);
+      setTimeout(() => {
+        CreateClones(pixels, canvasEl, 245, 0, newCanvasEl3);
+      }, 200);
+      setTimeout(() => {
+        CreateClones(pixels, canvasEl, 255, 0, newCanvasEl4);
+      }, 100);
+
+      CreateClones(pixels, canvasEl, 255, 0, newCanvasEl5);
+
       videoToRevealEl.play();
     } else {
       console.error("Waiting to camera to load");
