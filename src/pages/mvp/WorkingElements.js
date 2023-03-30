@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import Webcam from "react-webcam";
 
@@ -8,10 +9,19 @@ const WorkingElements = ({
   webcam,
   videoToReveal,
   imgRef,
-  backgroundImages,
-  videoToRevealSrc,
   currentScreen,
 }) => {
+  const backgroundImages = [
+    "/images/backgrounds/wellignton.png",
+    "/images/backgrounds/courageToAct.jpg",
+    "/images/backgrounds/rocket.jpg",
+  ];
+
+  const videoToRevealSrc = [
+    "/video/particles.mp4",
+    "/video/your-video.mp4",
+    "/video/plain.mp4",
+  ];
   return (
     <Fragment>
       <canvas

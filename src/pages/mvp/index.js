@@ -17,18 +17,6 @@ export default function Home() {
   const newCanvas4 = useRef(); // clone 4
   const newCanvas5 = useRef(); // clone 5
 
-  const [backgroundImages, setBackgroundImages] = useState([
-    "/images/backgrounds/wellignton.png",
-    "/images/backgrounds/courageToAct.jpg",
-    "/images/backgrounds/rocket.jpg",
-  ]);
-
-  const [videoToRevealSrc, setVideoToRevealSrc] = useState([
-    "/video/particles.mp4",
-    "/video/your-video.mp4",
-    "/video/plain.mp4",
-  ]);
-
   const [currentScreen, setCurrentScreen] = useState(0);
 
   useEffect(() => {
@@ -79,8 +67,6 @@ export default function Home() {
         webcam={webcam}
         videoToReveal={videoToReveal}
         imgRef={imgRef}
-        videoToRevealSrc={videoToRevealSrc}
-        backgroundImages={backgroundImages}
         currentScreen={currentScreen}
       />
     </Fragment>
