@@ -1,9 +1,10 @@
 "use client";
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 import CanvasElement from "./CanvasElement";
-import RemoveBackground from "../../utils/Functions/RemoveBackground";
 import WorkingElements from "./WorkingElements";
+import handleScreenChange from "@/utils/Functions/HandleScreenChange";
+import RemoveBackground from "@/utils/Functions/RemoveBackground";
 
 export default function Home() {
   const canvas = useRef(); //First canvas on which the the Silhouette is drawn with black background
@@ -11,11 +12,25 @@ export default function Home() {
   const videoToReveal = useRef(); // Video that will be played inside the Silhouette
   const imgRef = useRef(); // background Image
   const newCanvas1 = useRef(); // clone 1
-  const newCanvas2 = useRef(); // clone 1
-  const newCanvas3 = useRef(); // clone 1
-  const newCanvas4 = useRef(); // clone 1
-  const newCanvas5 = useRef(); // clone 1
-  // const WorkingElementsRefs = { canvas, webcam, videoToReveal, imgRef }; // Props for the WorkingElements
+  const newCanvas2 = useRef(); // clone 2
+  const newCanvas3 = useRef(); // clone 3
+  const newCanvas4 = useRef(); // clone 4
+  const newCanvas5 = useRef(); // clone 5
+
+  const [backgroundImages, setBackgroundImages] = useState([
+    "/images/backgrounds/wellignton.png",
+    "/images/backgrounds/courageToAct.jpg",
+    "/images/backgrounds/rocket.jpg",
+  ]);
+
+  const [videoToRevealSrc, setVideoToRevealSrc] = useState([
+    "/video/particles.mp4",
+    "/video/your-video.mp4",
+    "/video/plain.mp4",
+  ]);
+
+  const [currentScreen, setCurrentScreen] = useState(0);
+
   useEffect(() => {
     // Assigning the current states
     const canvasEl = canvas.current;
@@ -43,8 +58,13 @@ export default function Home() {
       newCanvasEl4,
       newCanvasEl5
     );
-  }, []);
 
+    window.addEventListener("click", () =>
+      handleScreenChange(setCurrentScreen)
+    );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Fragment>
       <CanvasElement canvavrefDetail={newCanvas1} />
@@ -52,12 +72,16 @@ export default function Home() {
       <CanvasElement canvavrefDetail={newCanvas3} />
       <CanvasElement canvavrefDetail={newCanvas4} />
       <CanvasElement canvavrefDetail={newCanvas5} />
+
       {/* Grabbing data elements */}
       <WorkingElements
         canvas={canvas}
         webcam={webcam}
         videoToReveal={videoToReveal}
         imgRef={imgRef}
+        videoToRevealSrc={videoToRevealSrc}
+        backgroundImages={backgroundImages}
+        currentScreen={currentScreen}
       />
     </Fragment>
   );

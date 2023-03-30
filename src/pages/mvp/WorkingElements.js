@@ -3,8 +3,15 @@ import Webcam from "react-webcam";
 
 const { Fragment } = require("react");
 
-const WorkingElements = ({ canvas, webcam, videoToReveal, imgRef }) => {
-  // const { canvas, webcam, videoToReveal, imgRef } = refDetail;
+const WorkingElements = ({
+  canvas,
+  webcam,
+  videoToReveal,
+  imgRef,
+  backgroundImages,
+  videoToRevealSrc,
+  currentScreen,
+}) => {
   return (
     <Fragment>
       <canvas
@@ -20,7 +27,7 @@ const WorkingElements = ({ canvas, webcam, videoToReveal, imgRef }) => {
       ></canvas>
       <Image
         ref={imgRef}
-        src="/images/sample-12 - Copy.png"
+        src={backgroundImages[currentScreen]}
         alt="value photo"
         width={640}
         height={480}
@@ -52,7 +59,7 @@ const WorkingElements = ({ canvas, webcam, videoToReveal, imgRef }) => {
         width="640"
         height="480"
         controls
-        src="video/particles.mp4"
+        src={videoToRevealSrc[currentScreen]}
         loop
         style={{
           visibility: "hidden",

@@ -83,7 +83,7 @@ export default async function RemoveBackground(
         CreateClones(pixels, canvasEl, 255, 0, newCanvasEl4);
       }, 100);
 
-      CreateClones(pixels, canvasEl, 255, 0, newCanvasEl5);
+      CreateClones(pixels, canvasEl, 255, 50, newCanvasEl5);
 
       videoToRevealEl.play();
     } else {

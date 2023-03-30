@@ -8,7 +8,8 @@ const CanvasElement = ({ canvavrefDetail }) => {
         position: "absolute",
         top: 0,
         left: 0,
-        zIndex: "-1",
+        zIndex: "34",
+        transform: "scale(1.3)",
       }}
     ></canvas>
   );

@@ -8,17 +8,18 @@ export default function CreateClones(pixels, canvas, color, x, canvasToCreate) {
       modifiedPixels[i + 3] = 0;
     } else {
       // Preserve the red, green, and blue values for non-black pixels
-      if (x === 50) {
-        modifiedPixels[i] = pixels[i];
-        modifiedPixels[i + 1] = pixels[i + 1];
-        modifiedPixels[i + 2] = pixels[i + 2];
-      } else {
-        modifiedPixels[i] = pixels[i];
-        modifiedPixels[i + 1] = pixels[i + 1];
-        modifiedPixels[i + 2] = pixels[i + 2];
-      }
+
+      modifiedPixels[i] = pixels[i];
+      modifiedPixels[i + 1] = pixels[i + 1];
+      modifiedPixels[i + 2] = pixels[i + 2];
+
       // Preserve the alpha value for non-black pixels
-      modifiedPixels[i + 3] = pixels[i + 3];
+
+      if (x !== 0) {
+        modifiedPixels[i + 3] = pixels[i + 3];
+      } else {
+        modifiedPixels[i + 3] = color - 130;
+      }
     }
   }
 
@@ -31,5 +32,5 @@ export default function CreateClones(pixels, canvas, color, x, canvasToCreate) {
     canvasToCreate.height
   );
   const newContext = canvasToCreate.getContext("2d");
-  newContext.putImageData(newImageData, x, 0);
+  newContext.putImageData(newImageData, 0, 0);
 }
